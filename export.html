@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Export Data</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Link to your CSS file -->
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #fff;
+        font-family: Arial, sans-serif;
+      }
+      h1 {
+        color: #5c1e1e;
+      }
+      .button {
+        padding: 15px 30px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        background-color: #5c1e1e;
+        color: white;
+        transition: background-color 0.3s;
+        text-decoration: none;
+        display: inline-block; 
+      }
+      .button:hover {
+        background-color: #3b0f0f;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Export Data</h1>
+    <a class="button" id="exportButton" href="#">Download Export</a>
+
+    <script>
+      document
+        .getElementById("exportButton")
+        .addEventListener("click", function (event) {
+          event.preventDefault();
+          fetch("http://localhost:3000/api/v1/user-data/export-data")
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Network response was not ok");
+              }
+              return response.blob();
+            })
+            .then((blob) => {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.style.display = "none";
+              a.href = url;
+              a.download = `IHLA_user_report_${new Date().toISOString()}.xlsx`;
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+            })
+            .catch((error) =>
+              console.error(
+                "There was a problem with the fetch operation:",
+                error
+              )
+            );
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Page</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #fff; /* White background */
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            color: #5C1E1E; /* Wine color */
+        }
+        .button {
+            padding: 15px 30px;
+            font-size: 16px;
+            margin: 10px;
+            text-decoration: none; /* Remove underline */
+            border-radius: 5px;
+            background-color: #5C1E1E; /* Wine color */
+            color: white;
+            transition: background-color 0.3s;
+            display: inline-block; /* Make it behave like a button */
+        }
+        .button:hover {
+            background-color: #3B0F0F; /* Darker wine color */
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Data Management System</h1>
+    <a class="button" href="index.html">Enter Data</a>
+    <a class="button" href="export.html">Export Data</a>
+</body>
+</html>

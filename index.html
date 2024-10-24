@@ -5,126 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multi-Section Form</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4; /* Light grey background */
-            color: #3c3c3c; /* Dark text color for readability */
-            padding: 20px;
-        }
-        h2 {
-            text-align: center;
-            color: #721c24; /* Wine color */
-        }
-        .section {
-            display: none; /* Hide sections initially */
-            background-color: #fff; /* White background for sections */
-            border: 1px solid #721c24; /* Wine border */
-            padding: 20px;
-            border-radius: 5px; /* Rounded corners */
-            margin-bottom: 20px; /* Spacing between sections */
-        }
-        .active {
-            display: block; /* Show the active section */
-        }
-        label {
-            display: block;
-            margin-bottom: 10px;
-            color: #721c24; /* Wine color for labels */
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc; /* Light grey border for inputs */
-            border-radius: 4px; /* Rounded corners */
-            margin-bottom: 20px; /* Spacing below input */
-        }
-        button {
-            background-color: #721c24; /* Wine color for buttons */
-            color: white; /* White text color for buttons */
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px; /* Rounded corners */
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #5a161c; /* Darker wine color on hover */
-        }
+        /* Simple CSS for navigation between sections */
+        body { font-family: Arial, sans-serif; background-color: #f8f8f8; color: #333; }
+        .form-section { display: none; }
+        .active-section { display: block; }
+        .container { width: 50%; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 8px; }
+        .btn { background-color: #800020; color: white; padding: 10px 20px; border: none; cursor: pointer; border-radius: 5px; }
+        .btn:hover { background-color: #4b0012; }
     </style>
 </head>
 <body>
-    <h2>Multi-Section Form</h2>
-    <form id="multiSectionForm">
-        <div id="section1" class="section active">
+    <div class="container">
+        <h1>Multi-Section Form</h1>
+
+        <!-- Section 1: Math -->
+        <div class="form-section active-section" id="section-math">
             <h3>Math Section</h3>
-            <label for="mathQ1">What is 2 + 2?</label>
-            <input type="text" id="mathQ1" required>
-            <br><br>
-            <button type="button" onclick="nextSection('section1', 'section2')">Next</button>
-        </div>
-        
-        <div id="section2" class="section">
-            <h3>Science Section</h3>
-            <label for="scienceQ1">What is H2O?</label>
-            <input type="text" id="scienceQ1" required>
-            <br><br>
-            <button type="button" onclick="nextSection('section2', 'section3')">Next</button>
+            <label>What is 2 + 2?</label>
+            <input type="text" id="math-q1"><br><br>
+            <button class="btn" onclick="nextSection()">Next Section</button>
         </div>
 
-        <div id="section3" class="section">
-            <h3>History Section</h3>
-            <label for="historyQ1">When did WW2 start?</label>
-            <input type="text" id="historyQ1" required>
-            <br><br>
-            <button type="button" onclick="submitForm()">Submit</button>
+        <!-- Section 2: Science -->
+        <div class="form-section" id="section-science">
+            <h3>Science Section</h3>
+            <label>What is H2O?</label>
+            <input type="text" id="science-q1"><br><br>
+            <button class="btn" onclick="nextSection()">Next Section</button>
         </div>
-    </form>
+
+        <!-- Section 3: History -->
+        <div class="form-section" id="section-history">
+            <h3>History Section</h3>
+            <label>When did WW2 start?</label>
+            <input type="text" id="history-q1"><br><br>
+            <button class="btn" onclick="submitForm()">Submit Form</button>
+        </div>
+
+        <div id="message"></div>
+    </div>
 
     <script>
-        let currentSection = 1;
+        let currentSection = 0;
+        const sections = document.querySelectorAll('.form-section');
 
-        function nextSection(current, next) {
-            const answers = getAnswers(current);
-            // Optionally handle answers here before moving to the next section
-            document.getElementById(current).classList.remove('active');
-            document.getElementById(next).classList.add('active');
+        // Move to next section
+        function nextSection() {
+            sections[currentSection].classList.remove('active-section');
+            currentSection++;
+            sections[currentSection].classList.add('active-section');
         }
 
-        function getAnswers(sectionId) {
-            const section = document.getElementById(sectionId);
-            const inputs = section.querySelectorAll('input');
-            let answers = {};
-            inputs.forEach(input => {
-                answers[input.id] = input.value;
-            });
-            return answers;
-        }
-
+        // Submit the form and send data to backend
         async function submitForm() {
-            const answers = {
-                math: {
-                    answer: document.getElementById('mathQ1').value
-                },
-                science: {
-                    answer: document.getElementById('scienceQ1').value
-                },
-                history: {
-                    answer: document.getElementById('historyQ1').value
-                }
+            const data = {
+                math: [
+                    { question: "What is 2+2?", answer: document.getElementById('math-q1').value },
+                ],
+                science: [
+                    { question: "What is H2O?", answer: document.getElementById('science-q1').value },
+                ],
+                history: [
+                    { question: "When did WW2 start?", answer: document.getElementById('history-q1').value },
+                ]
             };
 
             try {
-                const response = await fetch('http://localhost:3000/sections', {
+                const response = await fetch('http://localhost:3000/api/v1/user-data/populate-sheet', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(answers)
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
                 });
 
-                const data = await response.json();
-                alert(data.message);
+                console.log(response)
+                
+                if (response.ok) {
+                    document.getElementById('message').innerText = 'Form submitted successfully!';
+                } else {
+                    document.getElementById('message').innerText = 'Error submitting form.';
+                }
             } catch (error) {
                 console.error('Error:', error);
+                document.getElementById('message').innerText = 'Error submitting form.';
             }
         }
     </script>
